@@ -12,7 +12,12 @@ public:
 	Player* getOwner(uint8_t x, uint8_t y, uint8_t z);
 	bool setOwner(Player* player, uint8_t x, uint8_t y, uint8_t z);
 	Player* nextPlayer(Player* currentPlayer);
-
+	uint8_t getPlayersCount();
+	Cell* getCell(uint8_t x, uint8_t y, uint8_t z);
+	Cell* getCell(uint8_t index);
+	uint8_t index(uint8_t x, uint8_t y, uint8_t z);
+	bool isMoveAble();
+	uint8_t getCubeSize();
 private:
 	Player* _players;
 	uint8_t _xSize; 
@@ -21,8 +26,6 @@ private:
 	uint8_t _cubeSize;
 	uint8_t _playersCount;
 	Cell* _field;
-	Cell* getCell(uint8_t x, uint8_t y, uint8_t z);
-	uint8_t index(uint8_t x, uint8_t y, uint8_t z);
 };
 
 #endif

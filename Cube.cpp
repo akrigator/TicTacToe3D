@@ -1,12 +1,7 @@
 #include "Cube.h"
 #include "Setup.h"
-
-#ifdef ARDUINO_CODE
 #include "Bounce.h"
 #include "Arduino.h"
-#else
-#include <iostream>
-#endif
 
 Cube::Cube() {
 	_gameField = new GameField(X_SIZE, Y_SIZE, Z_SIZE, PLAYERS_COUNT);
@@ -24,12 +19,15 @@ Cube::Cube() {
 	_ledDrive = new LedDrive(_gameField, _manipulator);
 
 	_currentPlayer = _gameField->getPlayer(BLUE);
+	
+	_rules = new Rules(X_SIZE, Y_SIZE, Z_SIZE, STRAIGHT_LENGTH);
 }
 
 Cube::~Cube() {
 	delete _gameField;
 	delete _manipulator;
 	delete _ledDrive;
+	delete _rules;
 }
 
 void Cube::meshButtonPress() {
@@ -37,10 +35,14 @@ void Cube::meshButtonPress() {
 }
 
 void Cube::playerMove() {
-	//One of player press an action button.
-	//Here should be made an initialization of the cell owner by a value of player
-	if (_gameField->setOwner(_currentPlayer, _manipulator->getX(), _manipulator->getY(), _manipulator->getZ()) )
+	if (_gameField->isMoveAble() && _gameField->setOwner(_currentPlayer, _manipulator->getX(), _manipulator->getY(), _manipulator->getZ()) ) {
 		_currentPlayer = _gameField->nextPlayer(_currentPlayer);
+		if (!_gameField->isMoveAble()) {
+			_rules->findStraights(_gameField);
+			Serial.print("Blue: ");Serial.println(_gameField->getPlayer(BLUE)->getStraightsCount());
+			Serial.print("Red: ");Serial.println(_gameField->getPlayer(RED)->getStraightsCount());
+		}
+	}
 }
 
 void Cube::show() {
@@ -119,7 +121,6 @@ bool Cube::Manipulator::operator== (Coordinate& c) {
 // BUTTONDRIVE
 
 Cube::ButtonDrive::ButtonDrive() {
-#ifdef ARDUINO_CODE
 	for (int i = 0; i < BUTTONS_COUNT; i++) {
 		pinMode(BUTTONS[i].pin, INPUT);
 	}
@@ -128,29 +129,19 @@ Cube::ButtonDrive::ButtonDrive() {
 	for (uint8_t b = xButton; b < BUTTONS_COUNT; b++) {
 		_buttons[b] = Bounce(BUTTONS[b].pin, DEBONCE_INTERVAL);
 	}
-#else
-	std::cout << "Buttons are initialized\n";
-#endif
 }
 
 Cube::ButtonDrive::~ButtonDrive() {
 	delete []_buttons;
-#ifndef ARDUINO_CODE
-	std::cout << "Buttons are destroied\n";
-#endif
 }
 
 void Cube::ButtonDrive::meshButtonPress(Cube* cube, Manipulator* manipulator) {
-#ifdef ARDUINO_CODE
 	for (uint8_t b = xButton; b < BUTTONS_COUNT; b++) {
 		_buttons[b].update();
 		if (_buttons[b].risingEdge()) {
 			(cube->*manipulator->getButtonsAction()[b])();
 		}
 	}
-#else
-	std::cout << "Mesh of the button pressing\n";
-#endif
 }
 
 const Button Cube::ButtonDrive::BUTTONS[BUTTONS_COUNT] = {
@@ -193,7 +184,6 @@ void Cube::LedDrive::show() {
 }
 
 void Cube::LedDrive::modeBlindManipulator(Player* player, uint8_t x, uint8_t y, uint8_t z) {
-#ifdef ARDUINO_CODE
 	uint64_t timer = millis();
 
 	if (timer - _blindManipulatorTimer > MANIPULATOR_BLIND_INTERVAL) {
@@ -203,15 +193,12 @@ void Cube::LedDrive::modeBlindManipulator(Player* player, uint8_t x, uint8_t y, 
 	}
 
 	if (_blindManipulator) {
-#endif
 		_decoder->display(BRIGHTNESS / COLORS_PER_LED, BLUE, x, y, z);
 		_decoder->display(BRIGHTNESS / COLORS_PER_LED, RED, x, y, z);
-#ifdef ARDUINO_CODE
 	}
 	else {
 		modeLight(player, x, y, z);
 	}
-#endif
 }
 
 void Cube::LedDrive::modeLight(Player* player, uint8_t x, uint8_t y, uint8_t z) {
@@ -224,9 +211,7 @@ void Cube::LedDrive::modeLight(Player* player, uint8_t x, uint8_t y, uint8_t z) 
 }
 
 void Cube::LedDrive::modeOff() {
-#ifdef ARDUINO_CODE
 	delayMicroseconds(BRIGHTNESS);
-#endif
 }
 
 void Cube::LedDrive::check() {
@@ -235,9 +220,7 @@ void Cube::LedDrive::check() {
 			for (uint8_t y = 0; y < Y_SIZE; y++) {
 				for (uint8_t x = 0; x < X_SIZE; x++) {
 					_decoder->display(BRIGHTNESS, c, x, y, z);
-#ifdef ARDUINO_CODE
 					delay(50);
-#endif
 				}
 			}
 		}

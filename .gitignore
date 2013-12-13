@@ -213,3 +213,12 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+#############
+## Visual Micro
+#############
+
+Visual Micro/
+*.atsln
+*.atsuo
+*.cppproj

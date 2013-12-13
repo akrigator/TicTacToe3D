@@ -4,9 +4,8 @@
 #include "GameField.h"
 #include "Decoder.h"
 #include "Setup.h"
-#ifdef ARDUINO_CODE
 #include "Bounce.h"
-#endif
+#include "Rules.h"
 
 class Cube;
 typedef void (Cube::*pCubeMethod)();
@@ -45,13 +44,8 @@ public:
 		ButtonDrive();
 		~ButtonDrive();
 		void meshButtonPress(Cube* cube, Manipulator* manipulator);
-
 	private:
-#ifdef ARDUINO_CODE
 		Bounce* _buttons;
-#else
-		void* _buttons;
-#endif
 		static const Button BUTTONS[BUTTONS_COUNT];
 	};
 
@@ -79,6 +73,7 @@ protected:
 	ButtonDrive _buttonDrive;
 	LedDrive* _ledDrive;
 	Player* _currentPlayer;
+	Rules* _rules;
 	void manipulateX();
 	void manipulateY();
 	void manipulateZ();

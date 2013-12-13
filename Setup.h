@@ -1,11 +1,8 @@
-#if defined(ARDUINO) && ARDUINO >= 100
-#define ARDUINO_CODE
-#endif
-
 #define X_SIZE						3
 #define Y_SIZE						3
 #define Z_SIZE						3
 #define CUBE_SIZE					X_SIZE * Y_SIZE * Z_SIZE
+#define STRAIGHT_LENGTH				X_SIZE
 
 #define PLAYERS_COUNT				2	
 
@@ -15,17 +12,10 @@
 
 #define DEBONCE_INTERVAL			20	// Time interval (milliseconds) of the buttons debonce
 #define BUTTONS_COUNT				4
-#ifdef ARDUINO_CODE
 #define X_ITERATOR_PIN				A5
 #define Y_ITERATOR_PIN				A4
 #define Z_ITERATOR_PIN				A3
 #define ACTION_PIN					A2
-#else
-#define X_ITERATOR_PIN				10
-#define Y_ITERATOR_PIN				11
-#define Z_ITERATOR_PIN				12
-#define ACTION_PIN					13
-#endif
 
 #define DPP							10	// Decoder power pin
 #define DECODER_BITS				5	// log2 (X_SIZE * Y_SIZE * COLORS_PER_LED)

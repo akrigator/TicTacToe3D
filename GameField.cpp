@@ -55,6 +55,27 @@ Cell* GameField::getCell(uint8_t x, uint8_t y, uint8_t z) {
 	return &_field[index(x, y, z)];
 }
 
+Cell* GameField::getCell(uint8_t index) {
+	return &_field[index];
+}
+
 uint8_t GameField::index(uint8_t x, uint8_t y, uint8_t z) {
 	return x + _xSize * (y + z * _ySize);
+}
+
+bool GameField::isMoveAble() {
+	uint8_t counter = 0;
+	for (uint8_t i = 0; i < _cubeSize; i++) {
+		if (_field[i].getOwner())
+			counter++;
+	}
+	return _cubeSize - counter > _cubeSize % _playersCount;
+}
+
+uint8_t GameField::getPlayersCount() {
+	return _playersCount;
+}
+
+uint8_t GameField::getCubeSize() {
+	return _cubeSize;
 }
