@@ -1,23 +1,23 @@
 #include "Rules.h"
 
-Rules::Rules(uint8_t xSize, uint8_t ySize, uint8_t zSize, uint8_t straightLength) {
-	_straightLength = straightLength;
+Rules::Rules(uint8_t x, uint8_t y, uint8_t z, uint8_t l) {
+	_straightLength = l;
 	_rulesArray = new Rule[_rulesCount];
 	//2D
-	_rulesArray[0]	= Rule(Coordinate(0, 0, 0),	Coordinate(xSize-1,	ySize,		zSize),		1);
-	_rulesArray[1]	= Rule(Coordinate(0, 0, 0),	Coordinate(xSize,	ySize-1,	zSize),		xSize);
-	_rulesArray[2]	= Rule(Coordinate(0, 0, 0),	Coordinate(xSize-1,	ySize-1,	zSize),		xSize+1);
-	_rulesArray[3]	= Rule(Coordinate(1, 0, 0),	Coordinate(xSize,	ySize-1,	zSize),		xSize-1);
+	_rulesArray[0]	= Rule(Coordinate(0,		0,		0), Coordinate(x-l+1,	y,		z),		1);
+	_rulesArray[1]	= Rule(Coordinate(0,		0,		0), Coordinate(x,		y-l+1,	z),		x);
+	_rulesArray[2]	= Rule(Coordinate(0,		0,		0), Coordinate(x-l+1,	y-l+1,	z),		x+1);
+	_rulesArray[3]	= Rule(Coordinate(l-1,		0,		0), Coordinate(x,		y-l+1,	z),		x-1);
 	//3D
-	_rulesArray[4]	= Rule(Coordinate(0, 0, 0),	Coordinate(xSize,	ySize,		zSize-1),	xSize*ySize);
-	_rulesArray[5]	= Rule(Coordinate(0, 0, 0),	Coordinate(xSize-1,	ySize,		zSize-1),	xSize*ySize+1);
-	_rulesArray[6]	= Rule(Coordinate(1, 0, 0),	Coordinate(xSize,	ySize,		zSize-1),	xSize*ySize-1);
-	_rulesArray[7]	= Rule(Coordinate(0, 0, 0),	Coordinate(xSize,	ySize-1,	zSize-1),	xSize*(ySize+1));
-	_rulesArray[8]	= Rule(Coordinate(0, 1, 0),	Coordinate(xSize,	ySize,		zSize-1),	xSize*(ySize-1));
-	_rulesArray[9]	= Rule(Coordinate(0, 0, 0),	Coordinate(xSize-1,	ySize-1,	zSize-1),	xSize*(ySize+1)+1);
-	_rulesArray[10]	= Rule(Coordinate(1, 0, 0),	Coordinate(xSize,	ySize-1,	zSize-1),	xSize*(ySize+1)-1);
-	_rulesArray[11]	= Rule(Coordinate(0, 1, 0),	Coordinate(xSize-1,	ySize,		zSize-1),	xSize*(ySize-1)+1);
-	_rulesArray[12]	= Rule(Coordinate(1, 1, 0),	Coordinate(xSize,	ySize,		zSize-1),	xSize*(ySize-1)-1);
+	_rulesArray[4]	= Rule(Coordinate(0,		0,		0),	Coordinate(x,		y,		z-l+1),	x*y);
+	_rulesArray[5]	= Rule(Coordinate(0,		0,		0),	Coordinate(x-l+1,	y,		z-l+1),	x*y+1);
+	_rulesArray[6]	= Rule(Coordinate(l-1,		0,		0),	Coordinate(x,		y,		z-l+1),	x*y-1);
+	_rulesArray[7]	= Rule(Coordinate(0,		0,		0),	Coordinate(x,		y-l+1,	z-l+1),	x*(y+1));
+	_rulesArray[8]	= Rule(Coordinate(0,		l-1,	0),	Coordinate(x,		y,		z-l+1),	x*(y-1));
+	_rulesArray[9]	= Rule(Coordinate(0,		0,		0),	Coordinate(x-l+1,	y-l+1,	z-l+1),	x*(y+1)+1);
+	_rulesArray[10]	= Rule(Coordinate(l-1,		0,		0),	Coordinate(x,		y-l+1,	z-l+1),	x*(y+1)-1);
+	_rulesArray[11]	= Rule(Coordinate(0,		1,		0),	Coordinate(x-l+1,	y,		z-l+1),	x*(y-1)+1);
+	_rulesArray[12]	= Rule(Coordinate(l-1,		l-1,	0),	Coordinate(x,		y,		z-l+1),	x*(y-1)-1);
 }
 
 Rules::~Rules() {
@@ -30,24 +30,14 @@ void Rules::findStraights(GameField* gamefield) {
 			for (uint8_t z = _rulesArray[r].getStart()->getZ(); z < _rulesArray[r].getEnd()->getZ(); z++) {
 				for (uint8_t y = _rulesArray[r].getStart()->getY(); y < _rulesArray[r].getEnd()->getY(); y++) {
 					for (uint8_t x = _rulesArray[r].getStart()->getX(); x < _rulesArray[r].getEnd()->getX(); x++) {
-						if (gamefield->getCell(x, y, z)->getOwner()->getColor() == p) {
-							uint8_t rootIndex = gamefield->index(x, y, z);
-							uint8_t nodeIndex = rootIndex + _rulesArray[r].getStraightStep();
-							int straightLength = 1;
-							while ( gamefield->getCell(rootIndex)->getOwner()->getColor() == gamefield->getCell(nodeIndex)->getOwner()->getColor() 
-							&& nodeIndex < gamefield->getCubeSize() ) {
-								straightLength++;
-								rootIndex = nodeIndex;
-								nodeIndex += _rulesArray[r].getStraightStep();
-							}
-							if (straightLength == _straightLength) {
-								gamefield->getPlayer((Color)p)->addStraight(gamefield->index(x, y, z), _rulesArray[r].getStraightStep(), straightLength);
-								Serial.print("p=");Serial.print(p);Serial.print(" ");
-								Serial.print("r=");Serial.print(r);Serial.print(" ");
-								Serial.print("z=");Serial.print(z);Serial.print(" ");
-								Serial.print("y=");Serial.print(y);Serial.print(" ");
-								Serial.print("x=");Serial.println(x);
-							}
+						uint8_t index = gamefield->index(x, y, z);
+						int straightLength = 0;
+						while (gamefield->getCell(index)->getOwner()->getColor() == p && straightLength < _straightLength && index < gamefield->getCubeSize()) {
+							index += _rulesArray[r].getStraightStep();
+							straightLength++;
+						}
+						if (straightLength == _straightLength) {
+							gamefield->getPlayer((Color)p)->addStraight(gamefield->index(x, y, z), _rulesArray[r].getStraightStep(), straightLength);
 						}
 					}
 				}
