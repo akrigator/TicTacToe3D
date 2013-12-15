@@ -26,18 +26,15 @@ Rules::~Rules() {
 
 void Rules::findStraights(GameField* gamefield) {
 	for (uint8_t p = 0; p < gamefield->getPlayersCount(); p++) {
-		if (gamefield->getPlayer((Color)p)->getStraightsCount() != 0) {
-			return;
-		}
 		for (uint8_t r = 0; r < _rulesCount; r++) {
 			for (uint8_t z = _rulesArray[r].getStart()->getZ(); z < _rulesArray[r].getEnd()->getZ(); z++) {
 				for (uint8_t y = _rulesArray[r].getStart()->getY(); y < _rulesArray[r].getEnd()->getY(); y++) {
 					for (uint8_t x = _rulesArray[r].getStart()->getX(); x < _rulesArray[r].getEnd()->getX(); x++) {
-						if (gamefield->getCell(x, y, z)->getOwner() == gamefield->getPlayer((Color)p)) {
+						if (gamefield->getCell(x, y, z)->getOwner()->getColor() == p) {
 							uint8_t rootIndex = gamefield->index(x, y, z);
 							uint8_t nodeIndex = rootIndex + _rulesArray[r].getStraightStep();
 							int straightLength = 1;
-							while ( gamefield->getCell(rootIndex)->getOwner() == gamefield->getCell(nodeIndex)->getOwner() 
+							while ( gamefield->getCell(rootIndex)->getOwner()->getColor() == gamefield->getCell(nodeIndex)->getOwner()->getColor() 
 							&& nodeIndex < gamefield->getCubeSize() ) {
 								straightLength++;
 								rootIndex = nodeIndex;
@@ -45,11 +42,11 @@ void Rules::findStraights(GameField* gamefield) {
 							}
 							if (straightLength == _straightLength) {
 								gamefield->getPlayer((Color)p)->addStraight(gamefield->index(x, y, z), _rulesArray[r].getStraightStep(), straightLength);
-								/*Serial.print("p=");Serial.print(p);Serial.print(" ");
+								Serial.print("p=");Serial.print(p);Serial.print(" ");
 								Serial.print("r=");Serial.print(r);Serial.print(" ");
 								Serial.print("z=");Serial.print(z);Serial.print(" ");
 								Serial.print("y=");Serial.print(y);Serial.print(" ");
-								Serial.print("x=");Serial.println(x);*/
+								Serial.print("x=");Serial.println(x);
 							}
 						}
 					}

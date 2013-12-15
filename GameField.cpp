@@ -1,4 +1,5 @@
 #include "GameField.h"
+#include "Setup.h"
 
 GameField::GameField() {
 
@@ -11,6 +12,7 @@ GameField::GameField(uint8_t xSize, uint8_t ySize, uint8_t zSize, uint8_t player
 	_cubeSize = _xSize * _ySize * _zSize;
 	_playersCount = playersCount;
 	_field = new Cell[_cubeSize];
+	_moveAbility = true;
 	for (uint8_t z = 0; z < _zSize; z++) {
 		for (uint8_t y = 0; y < _ySize; y++) {
 			for (uint8_t x = 0; x < _xSize; x++) {
@@ -63,13 +65,17 @@ uint8_t GameField::index(uint8_t x, uint8_t y, uint8_t z) {
 	return x + _xSize * (y + z * _ySize);
 }
 
+bool GameField::getMoveAbility() {
+	return _moveAbility;
+}
+
 bool GameField::isMoveAble() {
 	uint8_t counter = 0;
 	for (uint8_t i = 0; i < _cubeSize; i++) {
 		if (_field[i].getOwner())
 			counter++;
 	}
-	return _cubeSize - counter > _cubeSize % _playersCount;
+	return _moveAbility = ( _cubeSize - counter > _cubeSize % _playersCount );
 }
 
 uint8_t GameField::getPlayersCount() {
@@ -78,4 +84,44 @@ uint8_t GameField::getPlayersCount() {
 
 uint8_t GameField::getCubeSize() {
 	return _cubeSize;
+}
+
+/*
+ * bool GameField::animate()
+ * Returns:
+ *         'false' if straights of all players are animated.
+ *         'true' if at least one straight is not animated yet.
+ */
+bool GameField::animate() {
+	clearOwners();
+	bool allIsEmpty;
+	for (uint8_t p = 0; p < _playersCount; p++) {
+		bool isEmpty = _players[p].getStraights()->isEmpty();
+		
+		if (p == 0)
+			allIsEmpty = isEmpty;
+		else
+			allIsEmpty = allIsEmpty && isEmpty;
+			
+		if (!isEmpty)
+			addStraight(_players[p].getStraights()->pop());
+	}
+	return allIsEmpty;
+}
+
+void GameField::reset() {
+	clearOwners();
+	_moveAbility = true;
+}
+
+void GameField::clearOwners() {
+	for (uint8_t i = 0; i < _cubeSize; i++) {
+		_field[i].removeOwner();
+	}
+}
+
+void GameField::addStraight(Straight straight) {
+	for (uint8_t length = 0, i = straight.getCubeTripStart(); length < straight.getStraightLength(); length++, i += straight.getStraightStep()) {
+		_field[i].setOwner(&_players[straight.getColor()]);
+	}
 }

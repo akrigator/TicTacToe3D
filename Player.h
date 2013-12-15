@@ -5,8 +5,7 @@
 #include "Straight.h"
 #include "QueueList.h"
 #include <vector>
-
-enum Color { BLUE = 0, RED };
+#include "Setup.h"
 
 class Player {
 public:
@@ -15,6 +14,7 @@ public:
 	Color getColor();
 	void addStraight(uint8_t cubeTripStart, uint8_t straightStep, uint8_t straightLength);
 	uint8_t getStraightsCount();
+	QueueList<Straight>* getStraights();
 
 private:
 	Color _color;

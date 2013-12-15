@@ -17,6 +17,10 @@ bool Cell::setOwner(Player* player) {
 	return true;
 }
 
+void Cell::removeOwner() {
+	_owner = NULL;
+}
+
 Player* Cell::getOwner() const {
 	return _owner;
 }

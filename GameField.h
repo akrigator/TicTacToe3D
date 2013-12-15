@@ -16,8 +16,11 @@ public:
 	Cell* getCell(uint8_t x, uint8_t y, uint8_t z);
 	Cell* getCell(uint8_t index);
 	uint8_t index(uint8_t x, uint8_t y, uint8_t z);
-	bool isMoveAble();
 	uint8_t getCubeSize();
+	bool getMoveAbility();
+	bool isMoveAble();
+	bool animate();
+	void reset();
 private:
 	Player* _players;
 	uint8_t _xSize; 
@@ -26,6 +29,9 @@ private:
 	uint8_t _cubeSize;
 	uint8_t _playersCount;
 	Cell* _field;
+	bool _moveAbility;
+	void clearOwners();
+	void addStraight(Straight straight);
 };
 
 #endif

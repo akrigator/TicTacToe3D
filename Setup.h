@@ -1,3 +1,6 @@
+#ifndef _SETUP_H_
+#define _SETUP_H_
+
 #define X_SIZE						3
 #define Y_SIZE						3
 #define Z_SIZE						3
@@ -7,8 +10,10 @@
 #define PLAYERS_COUNT				2	
 
 #define COLORS_PER_LED				2
+enum Color { BLUE = 0, RED };
 #define BRIGHTNESS					500	// Time interval (microseconds) in which ONLY an one led is light
-#define MANIPULATOR_BLIND_INTERVAL	500
+#define MANIPULATOR_BLINK_INTERVAL	500
+#define ANIMATE_INTERVAL			3000
 
 #define DEBONCE_INTERVAL			20	// Time interval (milliseconds) of the buttons debonce
 #define BUTTONS_COUNT				4
@@ -29,3 +34,5 @@
 #define C0							7
 #define C1							8
 #define C2							9
+
+#endif
