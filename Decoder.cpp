@@ -2,10 +2,9 @@
 #include "Setup.h"
 #include "Arduino.h"
 
-Decoder::Decoder(uint8_t colorsPerLed, uint8_t xSize, uint8_t decoderPowerPin, uint8_t decoderPinsCount, uint8_t* decoderPins, uint8_t cathodePinsCount, uint8_t* cathodePins) {
+Decoder::Decoder(uint8_t colorsPerLed, uint8_t xSize, uint8_t decoderPinsCount, uint8_t* decoderPins, uint8_t cathodePinsCount, uint8_t* cathodePins) {
 	_colorsPerLed = colorsPerLed;
 	_xSize = xSize;
-	_decoderPowerPin = decoderPowerPin;
 	_decoderPinsCount = decoderPinsCount;
 	_cathodePinsCount = cathodePinsCount;
 
@@ -19,7 +18,6 @@ Decoder::Decoder(uint8_t colorsPerLed, uint8_t xSize, uint8_t decoderPowerPin, u
 		_cathodePins[pin] = cathodePins[pin];
 	}
 
-	pinMode(_decoderPowerPin, OUTPUT);
 	for (int pin = 0; pin < _decoderPinsCount; pin++) {
 		pinMode(_decoderPins[pin], OUTPUT);
 	}
@@ -44,13 +42,18 @@ void Decoder::cathode(uint8_t layer) {
 	}
 }
 
+void Decoder::cathodesOff() {
+	for (int pin = 0; pin < _cathodePinsCount; pin++) {
+		digitalWrite(_cathodePins[pin], LOW);
+	}
+}
+
 void Decoder::displayNum(int brightness, uint8_t ledNum) {
-	digitalWrite(_decoderPowerPin, HIGH);
 	ledNum = constrain(ledNum, 0, CUBE_SIZE);
 	for (int weight = 1, pin = 0; pin < _decoderPinsCount; weight = weight << 1, pin++)
 		digitalWrite(_decoderPins[pin], (ledNum & weight) >> pin);
 	delayMicroseconds(brightness);
-	digitalWrite(_decoderPowerPin, LOW);
+	cathodesOff();
 }
 
 void Decoder::display(int brightness, uint8_t color, uint8_t x, uint8_t y, uint8_t z) {

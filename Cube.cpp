@@ -205,7 +205,7 @@ Cube::LedDrive::LedDrive(GameField* gameField, Manipulator* manipulator) {
 
 	uint8_t decoderPins[DECODER_BITS] = { D0, D1, D2, D3, D4 };
 	uint8_t cathodePins[CATHODE_PINS] = { C0, C1, C2 };
-	_decoder = new Decoder(COLORS_PER_LED, X_SIZE, DPP, DECODER_BITS, decoderPins, CATHODE_PINS, cathodePins);
+	_decoder = new Decoder(COLORS_PER_LED, X_SIZE, DECODER_BITS, decoderPins, CATHODE_PINS, cathodePins);
 }
 
 Cube::LedDrive::~LedDrive() {

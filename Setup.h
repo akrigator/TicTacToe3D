@@ -22,7 +22,6 @@ enum Color { BLUE = 0, RED };
 #define Z_ITERATOR_PIN				A3
 #define ACTION_PIN					A2
 
-#define DPP							10	// Decoder power pin
 #define DECODER_BITS				5	// log2 (X_SIZE * Y_SIZE * COLORS_PER_LED)
 #define D0							2
 #define D1							3
