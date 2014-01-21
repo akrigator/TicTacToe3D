@@ -18,9 +18,9 @@ enum Color { BLUE = 0, RED };
 #define DEBONCE_INTERVAL			20	// Time interval (milliseconds) of the buttons debonce
 #define BUTTONS_COUNT				4
 #define X_ITERATOR_PIN				A5
-#define Y_ITERATOR_PIN				A4
-#define Z_ITERATOR_PIN				A3
-#define ACTION_PIN					A2
+#define Y_ITERATOR_PIN				A2
+#define Z_ITERATOR_PIN				A4
+#define ACTION_PIN					A3
 
 #define DECODER_BITS				5	// log2 (X_SIZE * Y_SIZE * COLORS_PER_LED)
 #define D0							2

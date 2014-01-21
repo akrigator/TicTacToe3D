@@ -3,21 +3,21 @@
 Rules::Rules(uint8_t x, uint8_t y, uint8_t z, uint8_t l) {
 	_straightLength = l;
 	_rulesArray = new Rule[_rulesCount];
-	//2D
-	_rulesArray[0]	= Rule(Coordinate(0,		0,		0), Coordinate(x-l+1,	y,		z),		1);
-	_rulesArray[1]	= Rule(Coordinate(0,		0,		0), Coordinate(x,		y-l+1,	z),		x);
-	_rulesArray[2]	= Rule(Coordinate(0,		0,		0), Coordinate(x-l+1,	y-l+1,	z),		x+1);
-	_rulesArray[3]	= Rule(Coordinate(l-1,		0,		0), Coordinate(x,		y-l+1,	z),		x-1);
-	//3D
-	_rulesArray[4]	= Rule(Coordinate(0,		0,		0),	Coordinate(x,		y,		z-l+1),	x*y);
-	_rulesArray[5]	= Rule(Coordinate(0,		0,		0),	Coordinate(x-l+1,	y,		z-l+1),	x*y+1);
-	_rulesArray[6]	= Rule(Coordinate(l-1,		0,		0),	Coordinate(x,		y,		z-l+1),	x*y-1);
-	_rulesArray[7]	= Rule(Coordinate(0,		0,		0),	Coordinate(x,		y-l+1,	z-l+1),	x*(y+1));
-	_rulesArray[8]	= Rule(Coordinate(0,		l-1,	0),	Coordinate(x,		y,		z-l+1),	x*(y-1));
-	_rulesArray[9]	= Rule(Coordinate(0,		0,		0),	Coordinate(x-l+1,	y-l+1,	z-l+1),	x*(y+1)+1);
-	_rulesArray[10]	= Rule(Coordinate(l-1,		0,		0),	Coordinate(x,		y-l+1,	z-l+1),	x*(y+1)-1);
-	_rulesArray[11]	= Rule(Coordinate(0,		1,		0),	Coordinate(x-l+1,	y,		z-l+1),	x*(y-1)+1);
-	_rulesArray[12]	= Rule(Coordinate(l-1,		l-1,	0),	Coordinate(x,		y,		z-l+1),	x*(y-1)-1);
+	//2D (xy cross)																				//straightStep	= value
+	_rulesArray[0]	= Rule(Coordinate(0,	0,		0), Coordinate(x-l+1,	y,		z),		1);				//1
+	_rulesArray[3]	= Rule(Coordinate(l-1,	0,		0), Coordinate(x,		y-l+1,	z),		x-1);			//2
+	_rulesArray[1]	= Rule(Coordinate(0,	0,		0), Coordinate(x,		y-l+1,	z),		x);				//3
+	_rulesArray[2]	= Rule(Coordinate(0,	0,		0), Coordinate(x-l+1,	y-l+1,	z),		x+1);			//4
+	//3D (xyz cross)																						
+	_rulesArray[12]	= Rule(Coordinate(l-1,	l-1,	0),	Coordinate(x,		y,		z-l+1),	x*(y-1)-1);		//5
+	_rulesArray[8]	= Rule(Coordinate(0,	l-1,	0),	Coordinate(x,		y,		z-l+1),	x*(y-1));		//6
+	_rulesArray[11]	= Rule(Coordinate(0,	l-1,	0),	Coordinate(x-l+1,	y,		z-l+1),	x*(y-1)+1);		//7
+	_rulesArray[6]	= Rule(Coordinate(l-1,	0,		0),	Coordinate(x,		y,		z-l+1),	x*y-1);			//8
+	_rulesArray[4]	= Rule(Coordinate(0,	0,		0),	Coordinate(x,		y,		z-l+1),	x*y);			//9
+	_rulesArray[10]	= Rule(Coordinate(l-1,	0,		0),	Coordinate(x,		y-l+1,	z-l+1),	x*(y+1)-1);		//11
+	_rulesArray[5]	= Rule(Coordinate(0,	0,		0),	Coordinate(x-l+1,	y,		z-l+1),	x*y+1);			//10
+	_rulesArray[7]	= Rule(Coordinate(0,	0,		0),	Coordinate(x,		y-l+1,	z-l+1),	x*(y+1));		//12
+	_rulesArray[9]	= Rule(Coordinate(0,	0,		0),	Coordinate(x-l+1,	y-l+1,	z-l+1),	x*(y+1)+1);		//13
 }
 
 Rules::~Rules() {
